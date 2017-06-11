@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -12,6 +14,11 @@ app.set('view engine', 'pug');
 
 // logging
 app.use(logger('dev'));
+
+// body and cookie parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // static Files
 app.use(express.static(path.join(__dirname, 'public')));
