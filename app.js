@@ -1,20 +1,35 @@
 const express = require('express');
 const path = require('path');
+const logger = require('morgan');
+
 const app = express();
-const router = express.Router();
-const morgan = require('morgan');
 
-// Static folder for serving js and css files
-router.use(express.static(path.join(__dirname, 'public')));
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-router.use(morgan('tiny'));
+// logging
+app.use(logger('dev'));
 
-router.get('/', function(req, res) {
-  res.send('Hello World!');
+// static Files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-app.use('/', router);
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-app.listen(3000, function(){
-  console.log('Express App running on port 3000!');
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
+
+module.exports = app;
